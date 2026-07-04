@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Weekly Human Checklist</title>
+<style>
+:root{
+  --bg:23,22,26;--panel:33,31,38;--panel2:28,27,33;--accent:201,168,110;
+  --good:147,169,140;--text:234,229,221;--sub:156,150,141;--faint:97,92,100;
+  --line:48,46,55;--sky1:42,44,56;--sky2:20,19,25;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:rgb(var(--bg));color:rgb(var(--text));font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;min-height:100vh}
+button,input{font-family:inherit}button{cursor:pointer;border:0;background:none;color:inherit}
+#scene{position:fixed;inset:0;overflow:hidden;z-index:0;background:linear-gradient(rgb(var(--sky1)),rgb(var(--sky2)))}
+#scene:before{content:"";position:absolute;inset:0;background:
+ radial-gradient(circle at 78% 14%,rgba(var(--accent),.28),transparent 18%),
+ radial-gradient(circle at 20% 60%,rgba(var(--text),.08),transparent 24%),
+ linear-gradient(rgba(var(--bg),.14),rgba(var(--bg),.62))}
+#scene:after{content:"";position:absolute;inset:0;opacity:.5;background:
+ linear-gradient(90deg,transparent 0 18%,rgba(var(--text),.035) 18.3% 18.6%,transparent 19% 58%,rgba(var(--text),.03) 58.3% 58.6%,transparent 59%),
+ radial-gradient(circle at 14% 33%,rgba(var(--text),.5) 0 1px,transparent 1.8px),
+ radial-gradient(circle at 74% 44%,rgba(var(--accent),.7) 0 1.2px,transparent 2px),
+ radial-gradient(circle at 48% 20%,rgba(var(--text),.28) 0 1px,transparent 1.8px);
+ background-size:auto,90px 120px,130px 170px,170px 220px}
+body.w-rain #scene:after{background:
+ linear-gradient(168deg,transparent 0 76%,rgba(var(--text),.18) 78%,transparent 84%),
+ linear-gradient(90deg,transparent 0 18%,rgba(var(--text),.035) 18.3% 18.6%,transparent 19% 58%,rgba(var(--text),.03) 58.3% 58.6%,transparent 59%);
+ background-size:8px 78px,auto;animation:rain 1s linear infinite}
+@keyframes rain{to{background-position:0 78px,0 0}}
+body.p-dawn #scene{background:linear-gradient(rgb(88,80,87),rgb(35,31,38))}
+body.p-day #scene{background:linear-gradient(rgb(78,82,92),rgb(38,36,42))}
+body.p-dusk #scene{background:linear-gradient(rgb(65,54,65),rgb(31,27,34))}
+.glass{background:rgba(var(--panel),.5);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(var(--text),.055)}
+.soft{background:rgba(var(--panel),.34);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(var(--text),.045)}
+#app{position:relative;z-index:1;max-width:460px;margin:0 auto;padding:28px 18px 44px}
+.shadow{text-shadow:0 1px 8px rgba(var(--sky2),.85)}
+.sub{color:rgb(var(--sub))}.muted{color:rgb(var(--faint))}
+.round{border-radius:16px}.full{border-radius:999px}
+.top{display:flex;align-items:flex-start;justify-content:space-between;margin:8px 0 16px}
+.greet{font-size:24px;font-weight:650}.date{font-size:12px;margin-top:2px}.quote{font-size:13px;font-style:italic;margin-top:6px;color:rgb(var(--accent));text-align:left}
+.weather{display:flex;align-items:center;gap:5px;padding:6px 10px;margin-top:4px;font-size:11px;text-transform:capitalize}
+.spoons{padding:6px 10px;font-size:11px;font-weight:700;margin-top:6px}
+.level{position:relative;display:flex;align-items:center;gap:12px;padding:12px;margin-bottom:12px}
+.ring{display:grid;place-items:center;width:52px;height:52px;border-radius:50%}.inner{display:flex;flex-direction:column;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:rgb(var(--panel2))}
+.bar{height:8px;width:100%;border-radius:999px;overflow:hidden;background:rgba(var(--text),.1)}.bar i{display:block;height:100%;border-radius:999px;transition:width .35s ease}
+.tabbar{display:flex;gap:6px;margin-bottom:16px}.tab{flex:1;display:flex;align-items:center;justify-content:center;gap:4px;padding:8px 0;border-radius:14px;font-size:12px;font-weight:700}
+.pill{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 0;border-radius:14px}
+.card{padding:16px;margin-bottom:16px}.row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 12px;border-radius:14px}
+.check{display:flex;align-items:center;justify-content:center;width:23px;height:23px;border-radius:8px;flex:0 0 auto}
+.note{font-size:10px;padding:2px 8px;border-radius:999px;background:rgba(var(--bg),.6);color:rgb(var(--sub))}
+.secbtn{display:flex;align-items:center;gap:8px;width:100%;margin-bottom:8px;padding:0 4px;color:rgb(var(--sub))}
+.sec{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.badge{display:flex;flex-direction:column;align-items:center;text-align:center;padding:12px;border-radius:16px}
+.medal{display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;margin-bottom:8px;font-weight:700}
+input[type=date],input.sq{background:rgba(var(--bg),.5);color:rgb(var(--text));border:1px solid rgb(var(--line));border-radius:12px;padding:8px 10px;font-size:14px;outline:0}
+input.sq{background:transparent;border:0;flex:1}.fx{position:absolute;right:16px;top:8px;font-weight:800;color:rgb(var(--accent));pointer-events:none;animation:floatUp .95s ease forwards}
+.flash{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:16px;background:rgba(0,0,0,.5);animation:pop .4s ease;font-weight:800;color:rgb(var(--good))}
+@keyframes floatUp{0%{opacity:0;transform:translateY(6px)}20%{opacity:1}100%{opacity:0;transform:translateY(-22px)}}@keyframes pop{0%{transform:scale(.6);opacity:0}40%{transform:scale(1.1);opacity:1}100%{transform:scale(1);opacity:1}}
+
+  .cal-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px}
+  .cal-title{font-size:18px;font-weight:700}
+  .cal-nav{display:flex;gap:6px}
+  .cal-btn{border-radius:12px;padding:8px 10px;background:rgba(var(--text),.06);color:rgb(var(--sub));font-size:12px;font-weight:700}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+  .cal-weekday{text-align:center;font-size:10px;color:rgb(var(--faint));font-weight:700;letter-spacing:.08em}
+  .cal-day{position:relative;min-height:58px;border-radius:14px;padding:7px 6px;background:rgba(var(--text),.035);border:1px solid rgba(var(--text),.035);text-align:left}
+  .cal-day.out{opacity:.38}
+  .cal-day.today{border-color:rgb(var(--accent))}
+  .cal-day.selected{background:rgb(var(--accent));color:rgb(var(--bg))}
+  .cal-num{font-size:13px;font-weight:700}
+  .cal-mini{position:absolute;left:6px;right:6px;bottom:6px;height:4px;border-radius:999px;background:rgba(var(--text),.08);overflow:hidden}
+  .cal-mini i{display:block;height:100%;border-radius:999px;background:rgb(var(--good))}
+  .cal-dots{position:absolute;right:6px;top:7px;display:flex;gap:3px}
+  .cal-dot{width:5px;height:5px;border-radius:50%;background:rgb(var(--accent))}
+  .cal-dot.med{background:rgb(var(--good))}
+  .week-preview{display:flex;flex-direction:column;gap:6px}
+  .week-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:rgba(var(--text),.035)}
+  .week-date{width:54px;font-size:12px;font-weight:700}
+  .week-main{flex:1;min-width:0}
+  .week-main b{font-size:13px}
+  .week-main span{display:block;font-size:11px;color:rgb(var(--faint));margin-top:2px}
+
+</style>
+<script>
+window.addEventListener("error", function(e){
+  var el = document.getElementById("app");
+  if (el) {
+    el.innerHTML = '<div class="glass round card" style="position:relative;z-index:1;margin:28px auto;max-width:420px"><div class="shadow greet">Something crashed.</div><p class="sub" style="font-size:13px;line-height:1.45">JavaScript error: ' + String(e.message).replace(/[<>&"]/g, "") + '</p></div>';
+  }
+});
+</script>
+
+</head>
+<body>
+<div id="scene"></div><div id="app">
+  <div class="glass round card" style="position:relative;z-index:1;margin:28px auto;max-width:420px">
+    <div class="shadow greet">Loading human checklist…</div>
+    <p class="sub" style="font-size:13px;line-height:1.45">
+      If this stays on screen, the viewer is blocking JavaScript. Open the published GitHub Pages link, not the GitHub file preview.
+    </p>
+  </div>
+</div>
+<script>
+(function(){
+"use strict";
+const STORE="weekly-human-checklist-clean-built-v1";
+const DOSE_INTERVAL=14,KNOWN_DOSE="2026-07-03";
+const SEM={start:"2026-07-06",breakStart:"2026-09-07",breakEnd:"2026-09-18",end:"2026-11-13"};
+const COIN_TASK=10,COIN_MED=50,COIN_PERFECT=30;
+const DAY_LETTERS=["S","M","T","W","T","F","S"];
+const SECTIONS=[
+ {key:"morning",title:"Morning",tasks:[
+  ["m_water","Drink water"],["m_eat","Eat something"],["m_dressed","Change out of sleep clothes"],
+  ["m_teeth","Brush teeth"],["m_face","Wash face / skincare"],["m_eye","Eye hygiene","if needed"],
+  ["m_spf","SPF"],["m_move","Move my body once"],["m_outside","Outside / open a window","2 min"],
+  ["m_body","Body / pain check"],["m_main","One main thing"]
+ ]},
+ {key:"night",title:"Night",tasks:[
+  ["n_shower","Shower / wash body"],["n_teeth","Brush teeth"],["n_face","Wash face"],["n_eye","Eye hygiene","always"],
+  ["n_skin","Skincare"],["n_lip","Lip balm / lanolin"],["n_retinal","Retinal","Mon",1],["n_bha","BHA","Thu",4],
+  ["n_refill","Refill water"],["n_charge","Charge phone / iPad"],["n_tomorrow","Check tomorrow"],["n_desk","Desk reset"]
+ ]},
+ {key:"study",title:"Study / Admin",tasks:[
+  ["s_email","Check SIT email"],["s_bb","Check Blackboard"],["s_class","Started class / watched lecture"],
+  ["s_notes","Notes / deadlines"],["s_dump","Brain dump the swirl"],["s_closed","Closed the laptop for the day"]
+ ]}
+];
+// Cleaned: no duplicate dressed / moved / outside here.
+const HOME={key:"home",title:"Home Day",tasks:[["h_focus","Body-doubling / focus session"],["h_frog","Did the annoying thing"]]};
+const SPOONS_IDS=["med","m_water","m_eat","m_move"];
+const THEMES={
+ dusk:{name:"Lamplight",cost:0,bg:"23,22,26",panel:"33,31,38",panel2:"28,27,33",accent:"201,168,110",good:"147,169,140",text:"234,229,221",sub:"156,150,141",faint:"97,92,100",line:"48,46,55",sky1:"42,44,56",sky2:"20,19,25"},
+ moon:{name:"Moonlit",cost:200,bg:"20,23,28",panel:"30,34,42",panel2:"25,28,35",accent:"169,183,198",good:"143,166,160",text:"230,234,240",sub:"147,160,174",faint:"90,102,114",line:"44,51,61",sky1:"35,46,60",sky2:"17,21,27"},
+ linen:{name:"Warm Linen",cost:200,bg:"26,23,20",panel:"36,31,27",panel2:"30,26,22",accent:"203,176,138",good:"162,169,140",text:"237,231,222",sub:"160,150,138",faint:"107,97,87",line:"54,47,40",sky1:"51,41,31",sky2:"22,18,14"},
+ sage:{name:"Conservatory",cost:300,bg:"21,24,21",panel:"31,36,31",panel2:"25,29,25",accent:"183,196,160",good:"157,180,142",text:"231,236,226",sub:"151,163,143",faint:"94,106,88",line:"44,53,44",sky1:"37,48,36",sky2:"18,22,17"}
+};
+const ACH=[
+ ["first","First Steps",s=>s.checks>=1],["perfect","Flawless",s=>s.perfectDays>=1],["week","Untouchable",s=>s.perfectWeeks>=1],
+ ["s3","Warming Up",s=>s.maxStreak>=3],["s7","On a Roll",s=>s.maxStreak>=7],["s30","Unstoppable",s=>s.maxStreak>=30],
+ ["d1","Med Check",s=>s.doses>=1],["d5","Steady Hand",s=>s.doses>=5],["c100","Centurion",s=>s.checks>=100],["l5","Leveled Up",s=>s.level>=5]
+];
+const REFRESH=[["r_plan","Plan the week ahead"],["r_deadlines","Check assignment deadlines"],["r_laundry","Laundry"],["r_groceries","Groceries / meal plan"],["r_desk","Tidy desk + space"],["r_sheets","Fresh sheets / towels"],["r_devices","Charge all devices"],["r_intentions","Set 3 intentions"]];
+const QUOTES=["You woke up. That's a W.","Hydrate or diedrate.","Bare minimum is still a minimum. Respect.","Eat something that isn't just vibes.","Rest isn't lazy, it's a strategic cooldown.","Touch grass. Or don't. I'm a checklist, not a cop.","Small quest completed: existing today.","Feral is fine. Fed-and-watered feral is better.","One (1) responsible thing, then gremlin hours."];
+
+let state={log:{},lastDose:KNOWN_DOSE,sideQuests:[{id:"sq1",label:""},{id:"sq2",label:""}],meta:{streak:0,maxStreak:0,lastActiveDate:null},spent:0,owned:["dusk"],active:"dusk",weather:{mode:"clear",userSet:false,temp:null},collapsed:{},periods:[],pilates:[],weekly:{},spoons:false};
+let selected=today(),tab="day",quoteRoll=null,periodDraft=today(),prevLevel=null,calCursor=today().slice(0,7)+"-01";
+
+function pad(n){return String(n).padStart(2,"0")}function today(){let d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function fromYmd(s){let p=s.split("-").map(Number);return new Date(p[0],p[1]-1,p[2],12)}function ymd(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function addDays(s,n){let d=fromYmd(s);d.setDate(d.getDate()+n);return ymd(d)}function daysBetween(a,b){return Math.round((fromYmd(b)-fromYmd(a))/86400000)}
+function dow(s){return fromYmd(s).getDay()}function weekStartOf(s){return addDays(s,-((dow(s)+6)%7))}
+function prettyShort(s){return fromYmd(s).toLocaleDateString(undefined,{month:"short",day:"numeric"})}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]))}
+function cum(L){return 100*(L-1)*L/2}function levelFromXp(xp){let L=1;while(cum(L+1)<=xp)L++;return L}
+function codeToScene(c){return(c===0||c===1)?"clear":([2,3,45,48].includes(c)?"cloud":"rain")}
+function greeting(){let h=new Date().getHours();return h<5?"Rest well":h<12?"Good morning":h<17?"Good afternoon":h<21?"Good evening":"Cozy night"}
+function icon(name){const sv={check:'<path d="M20 6L9 17l-5-5"/>',flame:'<path d="M12 2s4 4 4 8a4 4 0 1 1-8 0c0-1 .5-2 1-3-2 1-3 3-3 5a6 6 0 0 0 12 0c0-5-6-10-6-10z"/>',pill:'<rect x="3" y="8" width="18" height="8" rx="4"/><path d="M12 8v8"/>',moon:'<path d="M21 12.8A8 8 0 1 1 11.2 3 6 6 0 0 0 21 12.8z"/>',cloud:'<path d="M17 17H7a4 4 0 1 1 1-8 5 5 0 0 1 9.6 1.4A3.5 3.5 0 0 1 17 17z"/>',rain:'<path d="M17 14H7a4 4 0 1 1 1-8 5 5 0 0 1 9.6 1.4A3.5 3.5 0 0 1 17 14z"/><path d="M8 19v2M12 19v2M16 19v2"/>',coins:'<circle cx="8" cy="8" r="5"/><path d="M16 8a5 5 0 1 1 0 8"/>',trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/>',bag:'<path d="M6 8h12l-1 12H7L6 8zM9 8V6a3 3 0 0 1 6 0v2"/>',drop:'<path d="M12 3s6 6 6 10a6 6 0 0 1-12 0c0-4 6-10 6-10z"/>',chevD:'<path d="M6 9l6 6 6-6"/>',chevR:'<path d="M9 6l6 6-6 6"/>',reset:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',pilates:'<circle cx="12" cy="5" r="2"/><path d="M12 7v6M9 20l3-7 3 7M6 11l6 2 6-2"/>'}[name];return `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${sv}</svg>`}
+
+function load(){try{let d=JSON.parse(localStorage.getItem(STORE)||"null");if(d){state=Object.assign(state,d);if(!state.owned.includes("dusk"))state.owned.push("dusk")}}catch(e){}}
+function save(){localStorage.setItem(STORE,JSON.stringify(state))}
+function studyActiveFor(s){return daysBetween(s,SEM.start)<=0}
+function isDoseDayFor(s){let diff=daysBetween(state.lastDose,s);return dow(s)===5&&diff>=0&&diff%DOSE_INTERVAL===0}
+function ordered(){return[SECTIONS[0],HOME,SECTIONS[1],SECTIONS[2]]}
+function normTask(t){return{id:t[0],label:t[1],note:t[2],onlyDay:t[3]}}
+function visibleIdsFor(s){let dw=dow(s),out=[];ordered().forEach(sec=>{if(sec.key==="study"&&!studyActiveFor(s))return;sec.tasks.map(normTask).forEach(t=>{if(!t.onlyDay||t.onlyDay===dw)out.push(t.id)})});state.sideQuests.forEach(q=>{if(q.label.trim())out.push(q.id)});if(isDoseDayFor(s))out.push("med");return out}
+function compute(){let earned=0,checks=0,doses=0,perfect=[];Object.keys(state.log).forEach(date=>{let ids=state.log[date]||[];ids.forEach(id=>{if(id==="med"){earned+=COIN_MED;doses++}else{earned+=COIN_TASK;checks++}});let vis=visibleIdsFor(date);if(vis.length&&vis.every(x=>ids.includes(x))){earned+=COIN_PERFECT;perfect.push(date)}});let wc={};perfect.forEach(d=>wc[weekStartOf(d)]=(wc[weekStartOf(d)]||0)+1);Object.keys(state.weekly||{}).forEach(w=>{let dn=state.weekly[w]||[];if(REFRESH.every(r=>dn.includes(r[0])))earned+=50});let level=levelFromXp(earned);return{earned,level,balance:earned-state.spent,intoLevel:earned-cum(level),forThis:cum(level+1)-cum(level),toNext:cum(level+1)-earned,stats:{checks,doses,perfectDays:perfect.length,perfectWeeks:Object.values(wc).filter(v=>v>=7).length,maxStreak:Math.max(state.meta.maxStreak||0,state.meta.streak||0),level}}}
+function applyTheme(){let t=THEMES[state.active]||THEMES.dusk;Object.keys(t).forEach(k=>{if(k!=="name"&&k!=="cost")document.documentElement.style.setProperty("--"+k,t[k])})}
+function phase(){let h=new Date().getHours();return h>=5&&h<8?"dawn":h>=8&&h<17?"day":h>=17&&h<20?"dusk":"night"}
+function applyBody(){document.body.className="w-"+state.weather.mode+" p-"+phase()}
+function bumpStreak(before,after){if(before===0&&after>0&&selected===today()){let m=state.meta;if(m.lastActiveDate===today())return;let streak=m.lastActiveDate===addDays(today(),-1)?m.streak+1:1;state.meta={streak,lastActiveDate:today(),maxStreak:Math.max(m.maxStreak||0,streak)}}}
+function toggle(id){let cur=state.log[selected]||[],on=!cur.includes(id),next=on?cur.concat(id):cur.filter(x=>x!==id),amt=null;if(on){let vis=visibleIdsFor(selected),was=vis.length&&vis.every(x=>cur.includes(x)),now=vis.length&&vis.every(x=>next.includes(x));amt=id==="med"?COIN_MED:COIN_TASK;if(!was&&now)amt+=COIN_PERFECT}bumpStreak(cur.length,next.length);state.log[selected]=next;return amt}
+function semStatus(){if(daysBetween(today(),SEM.start)>0){let n=daysBetween(today(),SEM.start);return"Semester starts in "+n+" day"+(n===1?"":"s")}if(daysBetween(today(),SEM.end)<0)return"Semester complete";if(daysBetween(SEM.breakStart,today())>=0&&daysBetween(today(),SEM.breakEnd)>=0)return"Mid-semester break";return"Semester · Week "+(Math.floor(daysBetween(SEM.start,today())/7)+1)}
+function taskRow(t,on){return `<button data-act="toggle" data-id="${t.id}" class="row" style="${on?"background:rgba(var(--good),.16)":"background:rgba(var(--text),.035)"}"><span class="check" style="${on?"background:rgb(var(--good));border:0":"background:transparent;border:2px solid rgb(var(--line))"}">${on?`<span style="color:rgb(var(--bg))">${icon("check")}</span>`:""}</span><span style="flex:1;font-size:15px;color:${on?"rgb(var(--faint))":"rgb(var(--text))"};text-decoration:${on?"line-through":"none"}">${esc(t.label)}</span>${t.note?`<span class="note">${t.note}</span>`:""}</button>`}
+function render(){let c=compute(),doneOn=state.log[selected]||[],isOn=id=>doneOn.includes(id),vis=visibleIdsFor(selected);if(state.spoons)vis=vis.filter(id=>SPOONS_IDS.includes(id));let total=vis.length,done=vis.filter(isOn).length,pct=total?Math.round(done/total*100):0,all=total&&done===total,levelPct=Math.min(100,Math.round(c.intoLevel/c.forThis*100));let daily=((Math.floor(fromYmd(today()).getTime()/86400000)%QUOTES.length)+QUOTES.length)%QUOTES.length;let quote=QUOTES[quoteRoll??daily];let wIcon=state.weather.mode==="clear"?icon("moon"):state.weather.mode==="cloud"?icon("cloud"):icon("rain");let fullDate=fromYmd(selected).toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});let tempTxt=state.weather.temp!=null?" · "+state.weather.temp+"°":"";let html=`<div class="top"><div><div class="shadow greet">${greeting()}</div><div class="shadow sub date">${esc(fullDate)}${tempTxt}</div><button data-act="reroll" class="quote shadow">${esc(quote)}</button></div><div style="display:flex;flex-direction:column;align-items:flex-end"><button data-act="weather" class="soft full weather">${wIcon}<span>${state.weather.mode}</span></button><button data-act="spoons" class="spoons full" style="${state.spoons?"background:rgb(var(--accent));color:rgb(var(--bg))":"background:rgba(var(--panel),.4);color:rgb(var(--sub));border:1px solid rgba(var(--text),.06)"}">${state.spoons?"Low-spoons: on":"Low-spoons"}</button></div></div>`;
+html+=`<div id="levelcard" class="glass round level"><div class="ring" style="background:conic-gradient(rgb(var(--accent)) ${levelPct*3.6}deg,rgba(var(--text),.1) 0deg)"><div class="inner"><span style="font-size:8px;color:rgb(var(--sub))">LVL</span><span style="font-size:16px;font-weight:800;color:rgb(var(--accent))">${c.level}</span></div></div><div style="flex:1"><div style="display:flex;align-items:center;gap:6px;color:rgb(var(--accent))">${icon("coins")}<span style="font-size:16px;font-weight:800;color:rgb(var(--text))">${c.balance.toLocaleString()}</span><span style="font-size:11px;color:rgb(var(--faint))">coins · ${c.toNext} XP to Lv ${c.level+1}</span></div><div class="bar" style="margin-top:8px"><i style="width:${levelPct}%;background:rgb(var(--accent))"></i></div></div></div>`;
+let tabs=[["day","Today","check"],["calendar","Weeks","moon"],["badges","Badges","trophy"],["shop","Shop","bag"],["cycle","Cycle","drop"]];html+=`<div class="tabbar">${tabs.map(t=>`<button data-act="tab" data-tab="${t[0]}" class="tab ${tab===t[0]?"":"soft"}" style="${tab===t[0]?"background:rgb(var(--accent));color:rgb(var(--bg))":"color:rgb(var(--sub))"}">${icon(t[2])} ${t[1]}</button>`).join("")}</div>`;
+if(tab==="day")html+=renderDay(isOn,pct,done,total,all);else if(tab==="calendar")html+=renderCalendar();else if(tab==="badges")html+=renderBadges(c.stats);else if(tab==="shop")html+=renderShop(c);else html+=renderCycle();document.getElementById("app").innerHTML=html;if(prevLevel!=null&&c.level>prevLevel){let lc=document.getElementById("levelcard");if(lc){let f=document.createElement("div");f.className="flash";f.textContent="✦ Level "+c.level;lc.appendChild(f);setTimeout(()=>f.remove(),2000)}}prevLevel=c.level;bindInputs()}
+function renderDay(isOn,pct,done,total,all){let html="",doseToday=isDoseDayFor(today()),doseTaken=(state.log[today()]||[]).includes("med");if(doseToday&&!doseTaken)html+=`<div class="round" style="display:flex;align-items:center;gap:12px;padding:14px;margin-bottom:12px;background:rgb(var(--accent));color:rgb(var(--bg));animation:pop .4s ease">${icon("pill")}<div style="flex:1"><div style="font-size:14px;font-weight:800">Biologic dose — this morning</div><div style="font-size:11px;opacity:.8">Today, ${prettyShort(today())}. Verify the date, then take it.</div></div><button data-act="takeMorning" style="font-size:12px;font-weight:800;background:rgb(var(--bg));color:rgb(var(--accent));border-radius:12px;padding:8px 12px">Take</button></div>`;let ws=weekStartOf(selected),pills="";for(let i=0;i<7;i++){let d=addDays(ws,i),a=d===selected,t=d===today(),dose=isDoseDayFor(d);pills+=`<button data-act="selday" data-date="${d}" class="pill ${a?"":"soft"}" style="${a?"background:rgb(var(--accent));color:rgb(var(--bg))":(t?"border:1.5px solid rgb(var(--accent))":"")}"><span style="font-size:10px;opacity:.75">${DAY_LETTERS[dow(d)]}</span><span style="font-size:14px;font-weight:700">${fromYmd(d).getDate()}</span>${dose?`<span style="position:absolute;bottom:3px;width:4px;height:4px;border-radius:50%;background:${a?"rgb(var(--bg))":"rgb(var(--good))"}"></span>`:""}</button>`}html+=`<div style="display:flex;gap:4px;margin-bottom:12px">${pills}</div><div class="glass round card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><span style="font-size:12px;color:rgb(var(--sub))">${semStatus()}</span><span style="display:flex;align-items:center;gap:4px;font-size:12px;color:${state.meta.streak>0?"rgb(var(--accent))":"rgb(var(--faint))"}">${icon("flame")}${state.meta.streak}</span></div><div class="bar"><i style="width:${pct}%;background:${all?"rgb(var(--good))":"rgb(var(--accent))"}"></i></div><p class="muted" style="font-size:12px;margin:8px 0 0">${done} of ${total} ${all?"— all clear. rest easy.":"done today"}</p></div>`;
+if(state.spoons){let ess=[];ordered().forEach(sec=>sec.tasks.map(normTask).forEach(t=>{if(SPOONS_IDS.includes(t.id)&&(!t.onlyDay||t.onlyDay===dow(selected)))ess.push(t)}));return html+`<div class="glass round" style="padding:6px;display:flex;flex-direction:column;gap:4px">${ess.map(t=>taskRow(t,isOn(t.id))).join("")}</div><p class="muted" style="font-size:12px;text-align:center;margin:12px 4px 0">Just the essentials today. Anything you do is a win.</p>`}
+html+=renderMedicine(isOn)+renderPilates();let allFolded=["morning","home","night","study","side"].every(k=>state.collapsed[k]);html+=`<div style="display:flex;justify-content:flex-end;margin-bottom:8px"><button data-act="collapseAll" style="font-size:11px;color:rgb(var(--sub))">${allFolded?"Expand all":"Collapse all"}</button></div>`;if(dow(selected)===0)html+=renderRefresh();ordered().forEach(sec=>{if(sec.key==="study"&&!studyActiveFor(selected))return;let tasks=sec.tasks.map(normTask).filter(t=>!t.onlyDay||t.onlyDay===dow(selected));if(!tasks.length)return;let def=sec.key==="morning"||sec.key==="home",open=(sec.key in state.collapsed)?!state.collapsed[sec.key]:def,sDone=tasks.filter(t=>isOn(t.id)).length;html+=`<div style="margin-bottom:16px"><button data-act="collapse" data-key="${sec.key}" class="secbtn">${icon(open?"chevD":"chevR")}<span class="sec shadow">${sec.title}</span><span style="font-size:11px;margin-left:auto;color:${sDone===tasks.length?"rgb(var(--good))":"rgb(var(--faint))"}">${sDone}/${tasks.length}</span></button>${open?`<div class="glass round" style="padding:6px;display:flex;flex-direction:column;gap:4px">${tasks.map(t=>taskRow(t,isOn(t.id))).join("")}</div>`:""}</div>`});html+=renderSide(isOn);html+=`<button data-act="clearDay" style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:4px;font-size:12px;color:rgb(var(--faint))">${icon("reset")} Clear this day's checks</button>`;return html}
+function renderMedicine(isOn){let selDose=isDoseDayFor(selected),isFri=dow(selected)===5,med=isOn("med"),next=state.lastDose,g=0;while(daysBetween(next,today())>0&&g<80){next=addDays(next,DOSE_INTERVAL);g++}let html=`<div class="glass round card" style="${selDose?"border:1.5px solid rgb(var(--accent))":""}"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;color:rgb(var(--accent))">${icon("pill")}<span style="font-size:14px;font-weight:700;color:rgb(var(--text))">Bi-weekly biologic</span><span style="font-size:10px;margin-left:auto">+50</span></div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:12px;color:rgb(var(--sub))"><span>Last: ${prettyShort(state.lastDose)}</span><span>Next: ${prettyShort(next)} (Fri)</span></div>`;if(isFri&&selDose)html+=`<button data-act="takeDose" class="row" style="${med?"background:rgba(var(--panel2),.7)":"background:rgba(var(--bg),.5)"}"><span class="check" style="${med?"background:rgb(var(--good));border:0":"background:transparent;border:2px solid rgb(var(--line))"}">${med?`<span style="color:rgb(var(--bg))">${icon("check")}</span>`:""}</span><span style="font-size:14px;color:${med?"rgb(var(--faint))":"rgb(var(--text))"}">${med?"Taken — next dose set":"Take this morning — verify date first"}</span></button>`;else html+=`<p class="muted" style="font-size:12px;margin:0">${isFri?"Off week — no dose this Friday.":"Dose is Friday only. Check the date before taking."}</p>`;return html+"</div>"}
+function renderPilates(){let by={};state.pilates.forEach(d=>by[weekStartOf(d)]=(by[weekStartOf(d)]||0)+1);let wk=weekStartOf(selected),n=state.pilates.filter(d=>weekStartOf(d)===wk).length,cur=weekStartOf(today()),st=0;while(by[cur]){st++;cur=addDays(cur,-7)}let on=state.pilates.includes(selected);return `<div class="glass round card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="color:rgb(var(--accent))">${icon("pilates")}</span><span style="font-size:14px;font-weight:700">Reformer Pilates</span><span style="margin-left:auto;display:flex;align-items:center;gap:4px;font-size:12px;color:${st>0?"rgb(var(--accent))":"rgb(var(--faint))"}">${icon("flame")}${st} wk</span></div><button data-act="pilates" class="row" style="${on?"background:rgba(var(--good),.16)":"background:rgba(var(--text),.035)"}"><span class="check" style="${on?"background:rgb(var(--good));border:0":"background:transparent;border:2px solid rgb(var(--line))"}">${on?`<span style="color:rgb(var(--bg))">${icon("check")}</span>`:""}</span><span style="font-size:14px;color:${on?"rgb(var(--faint))":"rgb(var(--text))"}">${on?"Session logged":"Log a session"}</span></button><p class="muted" style="font-size:12px;margin:8px 0 0">${n} session${n===1?"":"s"} this week</p></div>`}
+function renderRefresh(){let open=!("refresh" in state.collapsed)||!state.collapsed.refresh,wk=weekStartOf(selected),done=state.weekly[wk]||[],n=REFRESH.filter(r=>done.includes(r[0])).length;return `<div style="margin-bottom:12px"><button data-act="collapse" data-key="refresh" class="secbtn">${icon(open?"chevD":"chevR")}<span class="sec shadow" style="color:rgb(var(--accent))">Sunday Refresh</span><span style="font-size:11px;margin-left:auto;color:${n===REFRESH.length?"rgb(var(--good))":"rgb(var(--faint))"}">${n}/${REFRESH.length}</span></button>${open?`<div class="glass round" style="padding:6px;display:flex;flex-direction:column;gap:4px;border:1.5px solid rgb(var(--accent))">${REFRESH.map(r=>{let on=done.includes(r[0]);return `<button data-act="toggleWeek" data-id="${r[0]}" class="row" style="${on?"background:rgba(var(--good),.16)":"background:rgba(var(--text),.035)"}"><span class="check" style="${on?"background:rgb(var(--good));border:0":"background:transparent;border:2px solid rgb(var(--line))"}">${on?`<span style="color:rgb(var(--bg))">${icon("check")}</span>`:""}</span><span style="flex:1;font-size:15px;color:${on?"rgb(var(--faint))":"rgb(var(--text))"};text-decoration:${on?"line-through":"none"}">${esc(r[1])}</span></button>`}).join("")}</div>`:""}</div>`}
+function renderSide(isOn){let open=!state.collapsed.side;return `<div style="margin-bottom:16px"><button data-act="collapse" data-key="side" class="secbtn">${icon(open?"chevD":"chevR")}<span class="sec shadow">Side Quests</span></button>${open?`<div class="glass round" style="padding:6px;display:flex;flex-direction:column;gap:4px">${state.sideQuests.map(q=>{let on=isOn(q.id);return `<div class="row" style="${on?"background:rgba(var(--good),.16)":"background:rgba(var(--text),.035)"}"><button data-act="toggleSq" data-id="${q.id}" class="check" style="${on?"background:rgb(var(--good));border:0":"background:transparent;border:2px solid rgb(var(--line))"}">${on?`<span style="color:rgb(var(--bg))">${icon("check")}</span>`:""}</button><input class="sq" data-sq="${q.id}" value="${esc(q.label)}" placeholder="add a quest..." style="color:${on?"rgb(var(--faint))":"rgb(var(--text))"};text-decoration:${on?"line-through":"none"}"/></div>`}).join("")}</div>`:""}</div>`}
+
+function renderCalendar(){
+  if(!calCursor) calCursor=selected.slice(0,7)+"-01";
+  let monthStart=fromYmd(calCursor);
+  let monthName=monthStart.toLocaleDateString(undefined,{month:"long",year:"numeric"});
+  let gridStart=weekStartOf(ymd(monthStart));
+  let html=`<div class="glass round card"><div class="cal-toolbar"><button class="cal-btn" data-act="calPrev">‹</button><div><div class="cal-title">${monthName}</div><div class="muted" style="font-size:12px;margin-top:2px">Tap any day to open its checklist.</div></div><div class="cal-nav"><button class="cal-btn" data-act="calToday">today</button><button class="cal-btn" data-act="calNext">›</button></div></div><div class="cal-grid">`;
+  ["M","T","W","T","F","S","S"].forEach(d=>html+=`<div class="cal-weekday">${d}</div>`);
+  for(let i=0;i<42;i++){
+    let d=addDays(gridStart,i), ids=visibleIdsFor(d), logs=state.log[d]||[];
+    let done=ids.filter(x=>logs.includes(x)).length, pct=ids.length?Math.round(done/ids.length*100):0;
+    let out=d.slice(0,7)!==calCursor.slice(0,7), todayCls=d===today(), selectedCls=d===selected;
+    let dots="";
+    if(isDoseDayFor(d)) dots+=`<span class="cal-dot med"></span>`;
+    if((state.periods||[]).includes(d)) dots+=`<span class="cal-dot"></span>`;
+    html+=`<button class="cal-day ${out?"out":""} ${todayCls?"today":""} ${selectedCls?"selected":""}" data-act="calSelect" data-date="${d}"><span class="cal-num">${fromYmd(d).getDate()}</span><span class="cal-dots">${dots}</span><span class="cal-mini"><i style="width:${pct}%"></i></span></button>`;
+  }
+  html+=`</div></div>`;
+
+  let ws=weekStartOf(selected), weekDone=0, weekTotal=0, rows="";
+  for(let i=0;i<7;i++){
+    let d=addDays(ws,i), ids=visibleIdsFor(d), logs=state.log[d]||[], done=ids.filter(x=>logs.includes(x)).length;
+    weekDone+=done; weekTotal+=ids.length;
+    let status=dow(d)===0||dow(d)===6?"weekend":(!studyActiveFor(d)?"before semester":(daysBetween(SEM.breakStart,d)>=0&&daysBetween(d,SEM.breakEnd)>=0?"semester break":"study day"));
+    if(isDoseDayFor(d)) status+=" · biologic";
+    rows+=`<button class="week-row" data-act="calSelect" data-date="${d}"><div class="week-date">${fromYmd(d).toLocaleDateString(undefined,{weekday:"short",day:"numeric"})}</div><div class="week-main"><b>${done}/${ids.length||0} checks</b><span>${status}</span></div><span class="note">${d===today()?"today":prettyShort(d)}</span></button>`;
+  }
+  html+=`<div class="glass round card" style="padding:14px;margin-top:14px"><div class="cal-toolbar" style="margin-bottom:10px"><div><div class="cal-title">Week preview</div><div class="muted" style="font-size:12px;margin-top:2px">${prettyShort(ws)} – ${prettyShort(addDays(ws,6))} · ${weekDone}/${weekTotal} checks</div></div></div><div class="week-preview">${rows}</div></div>`;
+
+  html+=`<div class="grid" style="margin-top:14px"><div class="glass round mini"><span class="muted" style="font-size:12px">Semester</span><b>${semStatus()}</b></div><div class="glass round mini"><span class="muted" style="font-size:12px">Next dose</span><b>${nextDoseText()}</b></div></div>`;
+  return html;
+}
+function nextDoseText(){
+  let d=state.lastDose,g=0;
+  while(daysBetween(d,today())>0&&g<80){d=addDays(d,DOSE_INTERVAL);g++}
+  return prettyShort(d);
+}
+
+function renderBadges(s){let got=ACH.filter(a=>a[2](s)).length;return `<p class="shadow sub" style="font-size:12px;margin:0 0 12px">${got} of ${ACH.length} unlocked</p><div class="grid3">${ACH.map(a=>{let ok=a[2](s);return `<div class="glass badge" style="opacity:${ok?1:.55}"><div class="medal" style="background:${ok?"rgb(var(--accent))":"rgba(var(--text),.08)"};color:${ok?"rgb(var(--bg))":"rgb(var(--faint))"}">${ok?a[1][0]:"⌕"}</div><span style="font-size:11px;font-weight:600;line-height:1.1;color:${ok?"rgb(var(--text))":"rgb(var(--faint))"}">${a[1]}</span></div>`}).join("")}</div>`}
+function renderShop(c){return `<p class="shadow sub" style="font-size:12px;margin:0 0 8px">Spend coins on themes. Your level keeps its XP.</p><div style="display:flex;flex-direction:column;gap:10px">${Object.keys(THEMES).map(id=>{let th=THEMES[id],owned=state.owned.includes(id),active=state.active===id,afford=c.balance>=th.cost;let btn=owned?`<button data-act="equip" data-id="${id}" style="font-size:12px;font-weight:700;border-radius:12px;padding:6px 12px;background:${active?"rgb(var(--good))":"rgba(var(--text),.08)"};color:${active?"rgb(var(--bg))":"rgb(var(--sub))"}">${active?"Equipped":"Equip"}</button>`:`<button data-act="buy" data-id="${id}" ${afford?"":"disabled"} style="font-size:12px;font-weight:700;border-radius:12px;padding:6px 12px;background:${afford?"rgb(var(--accent))":"rgba(var(--text),.06)"};color:${afford?"rgb(var(--bg))":"rgb(var(--faint))"}">${afford?"Buy":"Locked"}</button>`;return `<div class="glass round" style="display:flex;align-items:center;gap:12px;padding:12px"><div style="display:flex;gap:4px"><span class="full" style="width:15px;height:15px;background:rgb(${th.bg});border:1px solid rgb(${th.line})"></span><span class="full" style="width:15px;height:15px;background:rgb(${th.accent})"></span><span class="full" style="width:15px;height:15px;background:rgb(${th.good})"></span></div><div style="flex:1"><span style="font-size:14px;font-weight:600">${th.name}</span>${owned?"":`<span style="display:block;font-size:11px;color:rgb(var(--faint))">${th.cost} coins</span>`}</div>${btn}</div>`}).join("")}</div>`}
+function renderCycle(){let ps=state.periods.slice().sort(),last=ps[ps.length-1],gaps=[];for(let i=1;i<ps.length;i++)gaps.push(daysBetween(ps[i-1],ps[i]));let avg=gaps.length?Math.round(gaps.reduce((a,b)=>a+b,0)/gaps.length):null,cycleDay=last?daysBetween(last,today())+1:null,pred=last&&avg?addDays(last,avg):null,until=pred?daysBetween(today(),pred):null;let html=`<div style="display:flex;flex-direction:column;gap:12px">`;if(last)html+=`<div class="glass round card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;color:rgb(var(--accent))">${icon("drop")}<span style="font-size:14px;font-weight:700;color:rgb(var(--text))">Day ${cycleDay} of your cycle</span></div><p class="sub" style="font-size:12px;margin:0">Last period started ${prettyShort(last)}.</p><p class="muted" style="font-size:12px;margin:4px 0 0">${pred?`Next expected around ${prettyShort(pred)} · ${until>=0?"in "+until+" day"+(until===1?"":"s"):Math.abs(until)+" day"+(Math.abs(until)===1?"":"s")+" ago"}. Cycle ~${avg} days.`:"Log one more start and I'll start predicting."}</p></div>`;else html+=`<div class="glass round card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;color:rgb(var(--accent))">${icon("drop")}<span style="font-size:14px;font-weight:700;color:rgb(var(--text))">No cycle data yet</span></div><p class="sub" style="font-size:12px;margin:0">Whenever your next period starts, log it here. No pressure, no judgement.</p></div>`;html+=`<div class="glass round card"><p class="sub" style="font-size:12px;margin:0 0 8px">Log a period start</p><button data-act="periodToday" style="width:100%;font-size:14px;font-weight:700;border-radius:14px;padding:10px;background:rgb(var(--accent));color:rgb(var(--bg))">Started today</button><div style="display:flex;gap:8px;margin-top:8px;align-items:center"><input type="date" id="pdraft" value="${periodDraft}" max="${today()}" style="flex:1"/><button data-act="periodDraft" class="soft" style="font-size:14px;font-weight:700;border-radius:12px;padding:8px 16px;color:rgb(var(--text))">Add</button></div></div>`;if(ps.length)html+=`<div class="glass round card"><p class="sub" style="font-size:12px;margin:0 0 8px">Logged starts</p>${ps.slice().reverse().map(d=>`<div class="row" style="background:rgba(var(--text),.035);padding:8px 12px"><span style="color:rgb(var(--accent))">${icon("drop")}</span><span style="font-size:14px;flex:1">${fromYmd(d).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})}</span><button data-act="periodRemove" data-date="${d}" style="font-size:11px;color:rgb(var(--faint))">remove</button></div>`).join("")}</div>`;return html+"</div>"}
+function bindInputs(){let pd=document.getElementById("pdraft");if(pd)pd.addEventListener("change",e=>periodDraft=e.target.value);document.querySelectorAll("input.sq").forEach(inp=>inp.addEventListener("input",e=>{let id=inp.dataset.sq;state.sideQuests=state.sideQuests.map(q=>q.id===id?{id:q.id,label:e.target.value}:q);save()}))}
+function fireAward(amt){let host=document.getElementById("levelcard");if(!host)return;let s=document.createElement("div");s.className="fx";s.textContent="+"+amt;host.appendChild(s);setTimeout(()=>s.remove(),950)}
+document.getElementById("app").addEventListener("click",e=>{let t=e.target.closest("[data-act]");if(!t)return;let act=t.dataset.act;if(act==="tab"){tab=t.dataset.tab;if(tab==="calendar")calCursor=selected.slice(0,7)+"-01";render()}else if(act==="selday"){selected=t.dataset.date;render()}else if(act==="calSelect"){selected=t.dataset.date;calCursor=selected.slice(0,7)+"-01";tab="day";render()}else if(act==="calPrev"){let d=fromYmd(calCursor);d.setMonth(d.getMonth()-1);calCursor=ymd(d).slice(0,7)+"-01";render()}else if(act==="calNext"){let d=fromYmd(calCursor);d.setMonth(d.getMonth()+1);calCursor=ymd(d).slice(0,7)+"-01";render()}else if(act==="calToday"){selected=today();calCursor=selected.slice(0,7)+"-01";render()}else if(act==="weather"){let m=state.weather.mode;state.weather={mode:m==="clear"?"cloud":m==="cloud"?"rain":"clear",userSet:true,temp:state.weather.temp};save();applyBody();render()}else if(act==="reroll"){let cur=quoteRoll??0,n=cur;while(n===cur)n=Math.floor(Math.random()*QUOTES.length);quoteRoll=n;render()}else if(act==="spoons"){state.spoons=!state.spoons;save();render()}else if(act==="toggle"){let amt=toggle(t.dataset.id);save();render();if(amt)fireAward(amt)}else if(act==="toggleSq"){let amt=toggle(t.dataset.id);save();render();if(amt)fireAward(amt)}else if(act==="takeMorning"){selected=today();state.lastDose=today();let cur=state.log[today()]||[];if(!cur.includes("med")){bumpStreak(cur.length,cur.length+1);state.log[today()]=cur.concat("med");save();render();fireAward(COIN_MED)}}else if(act==="takeDose"){let mt=(state.log[selected]||[]).includes("med");state.lastDose=mt?addDays(selected,-DOSE_INTERVAL):selected;let amt=toggle("med");save();render();if(amt)fireAward(amt)}else if(act==="collapse"){let k=t.dataset.key;state.collapsed[k]=!state.collapsed[k];save();render()}else if(act==="pilates"){let i=state.pilates.indexOf(selected);if(i>=0)state.pilates.splice(i,1);else state.pilates.push(selected);save();render()}else if(act==="toggleWeek"){let wk=weekStartOf(selected),id=t.dataset.id,cur=state.weekly[wk]||[],had=cur.includes(id);state.weekly[wk]=had?cur.filter(x=>x!==id):cur.concat(id);save();render();if(!had)fireAward(10)}else if(act==="collapseAll"){let all=["morning","home","night","study","side"].every(k=>state.collapsed[k]);let v=!all;state.collapsed={morning:v,home:v,night:v,study:v,side:v};save();render()}else if(act==="clearDay"){state.log[selected]=[];save();render()}else if(act==="buy"){let id=t.dataset.id,th=THEMES[id],c=compute();if(!state.owned.includes(id)&&c.balance>=th.cost){state.spent+=th.cost;state.owned.push(id);state.active=id;save();applyTheme();applyBody();render()}}else if(act==="equip"){state.active=t.dataset.id;save();applyTheme();applyBody();render()}else if(act==="periodToday"){if(!state.periods.includes(today())){state.periods.push(today());save();render()}}else if(act==="periodDraft"){if(periodDraft&&!state.periods.includes(periodDraft)){state.periods.push(periodDraft);save();render()}}else if(act==="periodRemove"){state.periods=state.periods.filter(x=>x!==t.dataset.date);save();render()}});
+function autoWeather(){if(state.weather.userSet||!navigator.geolocation)return;navigator.geolocation.getCurrentPosition(pos=>{let url=`https://api.open-meteo.com/v1/forecast?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&current=weather_code,temperature_2m&timezone=auto`;fetch(url).then(r=>r.json()).then(j=>{if(state.weather.userSet)return;let code=j?.current?.weather_code,temp=j?.current?.temperature_2m;if(typeof code==="number"){state.weather.mode=codeToScene(code);state.weather.temp=typeof temp==="number"?Math.round(temp):null;save();applyBody();render()}}).catch(()=>{})},()=>{},{timeout:4000})}
+load();applyTheme();applyBody();render();autoWeather();setInterval(applyBody,300000);
+})();
+</script>
+</body>
+</html>
